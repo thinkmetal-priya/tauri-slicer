@@ -70,18 +70,18 @@ const MainContent = () => {
         const verticesToPointsArray = await invoke(...invokeParams);
         console.log("value of verticesToPoints array", verticesToPointsArray); 
    
-        // for (const key of Object.keys(verticesToPointsArray)) {
-        //   const ylayerValue = key;
-        //   const pointsArray = verticesToPointsArray[key];
-        //   // console.log("value of pointsArray", pointsArray);
-        //   const polygons = await invoke("get_line_seg", {
-        //     layerYValue:key,
-        //     getLineSeg: pointsArray,
+        for (const key of Object.keys(verticesToPointsArray)) {
+          const ylayerValue = key;
+          const pointsArray = verticesToPointsArray[key];
+          // console.log("value of pointsArray", pointsArray);
+          const polygons = await invoke("get_line_seg", {
+            layerYValue:ylayerValue,
+            flatArray: pointsArray,
            
-        //   });
-        //   console.log("value of polygons", polygons);
+          });
+          console.log("value of polygons", polygons);
    
-        // }
+        }
       
         const pointsArray = [];
         Object.keys(verticesToPointsArray).forEach((key) => {

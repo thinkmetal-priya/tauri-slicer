@@ -10,6 +10,7 @@ pub fn run() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             geometry::slicing::vertices_to_points,
+            polygon::poly::get_line_seg,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

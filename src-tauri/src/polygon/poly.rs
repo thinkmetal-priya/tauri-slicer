@@ -72,15 +72,15 @@ pub fn get_all_polygons(array_of_edges: Vec<Edges>) -> Polygons {
 }
 #[tauri::command]
 pub fn get_line_seg(
-    layer_y_value: OrderedFloat<f32>,
+    layer_y_value: String,
     flat_array: Vec<f32>,
-) -> HashMap<OrderedFloat<f32>, Vec<Vec<Edges>>> {
+) -> HashMap<String, Vec<Vec<Edges>>> {
     let mut i = 0;
     // array of edges
 
     let mut edges_array: Vec<Edges> = vec![];
     // let mut map_of_layer_with_edges: HashMap<OrderedFloat<f32>, Vec<Edges>> = HashMap::new();
-    let mut map_of_layer_with_edges: HashMap<OrderedFloat<f32>, Vec<Vec<Edges>>> = HashMap::new();
+    let mut map_of_layer_with_edges: HashMap<String, Vec<Vec<Edges>>> = HashMap::new();
 
     while i + 5 < flat_array.len() {
         let p1: Point = [flat_array[i], flat_array[i + 1], flat_array[i + 2]];
@@ -92,7 +92,7 @@ pub fn get_line_seg(
 
     // map_of_layer_with_edges.insert(layer_y_value, edges_array);
     let polygons = get_all_polygons(edges_array);
-    map_of_layer_with_edges.insert(layer_y_value, polygons);
+    map_of_layer_with_edges.insert(layer_y_value.to_string(), polygons);
     // map_of_layer_with_edges
     map_of_layer_with_edges
 }
