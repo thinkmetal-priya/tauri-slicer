@@ -69,39 +69,59 @@ const MainContent = () => {
 
         const verticesToPointsArray = await invoke(...invokeParams);
         console.log("value of verticesToPoints array", verticesToPointsArray); 
-   
+       
+        // let polygonsArrMap=null;
+        // it is for each layer 
+    const arrayOfAllPolygonArrays = [];
         for (const key of Object.keys(verticesToPointsArray)) {
           const ylayerValue = key;
           const pointsArray = verticesToPointsArray[key];
           // console.log("value of pointsArray", pointsArray);
-          const polygons = await invoke("get_line_seg", {
+           const polygonsArrMap = await invoke("get_line_seg", {
             layerYValue:ylayerValue,
             flatArray: pointsArray,
            
           });
-          console.log("value of polygons", polygons);
+           console.log("value for each layer",polygonsArrMap);
+          Object.keys(polygonsArrMap).forEach((key)=>{
+            const arrayOfPolygons=polygonsArrMap[key];
+          
+            // console.log("aarray val of polygons",arrayVal);
+             dispatch({
+            type: "POLYGONS_ARRAY_PER_LAYER",
+            payload:arrayOfPolygons
+          
+          });
+          arrayOfAllPolygonArrays.push(arrayOfPolygons);
+          })
+          dispatch({
+            type:'ARRAY_OF_POLYGONS_ARRAY_PER_LAYER',
+            payload:arrayOfAllPolygonArrays
+          })
+      
    
         }
+
       
-        const pointsArray = [];
-        Object.keys(verticesToPointsArray).forEach((key) => {
-          const points = verticesToPointsArray[key];
+        // const pointsArray = [];
+        // Object.keys(verticesToPointsArray).forEach((key) => {
+        //   const points = verticesToPointsArray[key];
           
-          for (let i = 0; i < points.length; i += 3) {
-            const x = points[i];
-            const y = points[i + 1];
-            const z = points[i + 2];
-            pointsArray.push(x, y, z);
-          } 
+        //   for (let i = 0; i < points.length; i += 3) {
+        //     const x = points[i];
+        //     const y = points[i + 1];
+        //     const z = points[i + 2];
+        //     pointsArray.push(x, y, z);
+        //   } 
         
-        })
-        dispatch({
-            type: "POLYGON_VERTICES_DEBUG",
-            payload: {
+        // })
+        // dispatch({
+        //     type: "POLYGON_VERTICES_DEBUG",
+        //     payload: {
           
-              pointsArray,
-            },
-          });
+        //       pointsArray,
+        //     },
+        //   });
       } catch (error) {
         console.error("Error during slicing:", error);
         return;
@@ -124,11 +144,7 @@ const MainContent = () => {
   return (
     <>
       <section>
-        <div>
-          <input value={input} onChange={(e) => setInput(+e.target.value)} />
-          <button onClick={handleCompute}>Compute</button>
-          <p>{output}</p>
-        </div>
+      
         <div>
           <label htmlFor="">choose File</label>
           <input type="file" onChange={handleFileInput} />
@@ -139,9 +155,9 @@ const MainContent = () => {
         <div>
           <CanvasComp meshRef={meshRef} />
         </div>
-        /
+        
       </section>
-      ;
+      
     </>
   );
 };

@@ -7,7 +7,9 @@ import {
   SLICING,
   TOTALVERTICES,
   VERTICES,
-POLYGON_VERTICES_DEBUG
+POLYGON_VERTICES_DEBUG,
+POLYGONS_ARRAY_PER_LAYER,
+ARRAY_OF_POLYGONS_ARRAY_PER_LAYER,
 } from "./constants/actions";
 
 export const initialState = {
@@ -17,7 +19,9 @@ export const initialState = {
   totalVertices: null,
   vertices: [],
   segments: [],
-  polygonVerticesDebug: null, // Initialize polygonVerticesDebug
+  polygonVerticesDebug: null,
+  polyonsArrayPerLayer:[],
+  arrayOfpolyonsArrayPerLayer:[],
 };
 //  reducer fucntion
 export function reducer(state, action) {
@@ -41,6 +45,15 @@ export function reducer(state, action) {
     }
     case POLYGON_VERTICES_DEBUG: {
       return { ...state, polygonVerticesDebug: action.payload };
+    }
+    case POLYGONS_ARRAY_PER_LAYER:{
+      return{...state,polyonsArrayPerLayer:action.payload}
+    }
+    case ARRAY_OF_POLYGONS_ARRAY_PER_LAYER:{
+      return {...state,arrayOfpolyonsArrayPerLayer:[
+      ...state.arrayOfpolyonsArrayPerLayer,
+      action.payload,
+    ],}
     }
     default: {
       throw new Error("Action not registered:" + action.type);

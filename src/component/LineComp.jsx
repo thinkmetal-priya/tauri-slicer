@@ -1,22 +1,35 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Context } from '../context';
 import { useThree } from '@react-three/fiber';
 import { Line } from '@react-three/drei';
+import { div } from 'three/tsl';
 
 function LineComp() {
     const state = useContext(Context);
-    const polygonVertices = state.polygonVerticesDebug;
+    const arrayOfpolygonsPerLayer=state.arrayOfpolyonsArrayPerLayer
+    const polygonsArray = state.polyonsArrayPerLayer||[];
+    // const [points,setPoint]=useState([])
     const points = [];
+    
+    // console.lo<g("polygons in array", polygonsArray);
+    for(let i=0;i<polygonsArray.length;i++){
+        const singlePolygon=polygonsArray[i];
+        if (singlePolygon && singlePolygon.length > 0) {
+        // const localPointsArray=[];
+        for (let i = 0; i < singlePolygon.length; i++) {
 
-    if (polygonVertices && polygonVertices.pointsArray.length > 0) {
-        for (let i = 0; i < polygonVertices.pointsArray.length; i += 3) {
-            points.push([polygonVertices.pointsArray[i], polygonVertices.pointsArray[i + 1], polygonVertices.pointsArray[i + 2]]);
+            for(let j=0;j<singlePolygon[i].length;j++){
+                points.push(singlePolygon[i][j],singlePolygon[i][j++],singlePolygon[i][j++]);
+                // setPoint(localPointsArray)
+            }
         }
     }
+    }
+ 
 
     return (
         <group>
-            {points.length > 1 && (
+            { points .length > 1 && (
                 <Line
                     points={points}
                     color="blue"
@@ -24,6 +37,7 @@ function LineComp() {
                 />
             )}
         </group>
+       
     )
 }
 

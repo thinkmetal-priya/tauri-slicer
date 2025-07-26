@@ -9,7 +9,7 @@ function DebugComp() {
     const state = useContext(Context);
     const polygonVertices = state.polygonVerticesDebug;
     const reneringObjs =[]
- const initTime=window.performance.now()
+     const initTime=window.performance.now()
     if(polygonVertices&& polygonVertices.pointsArray.length > 0){ 
         
         let index = 0;

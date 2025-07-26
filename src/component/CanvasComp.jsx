@@ -25,8 +25,8 @@ const CanvasComp = ({ meshRef }) => {
 
       <Bed />
       <STLComp meshRef={meshRef} />
-      <DebugComp/>
-      {/* <LineComp/> */}
+      {/* <DebugComp/> */}
+      <LineComp/>
     </Canvas>
   );
 };
