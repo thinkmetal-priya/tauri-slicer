@@ -72,8 +72,9 @@ const MainContent = () => {
        
         // let polygonsArrMap=null;
         // it is for each layer 
-    const arrayOfAllPolygonArrays = [];
+   
         for (const key of Object.keys(verticesToPointsArray)) {
+           const arrayOfAllPolygonArrays = [];
           const ylayerValue = key;
           const pointsArray = verticesToPointsArray[key];
           // console.log("value of pointsArray", pointsArray);

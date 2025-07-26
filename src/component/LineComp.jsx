@@ -4,16 +4,16 @@ import { useThree } from '@react-three/fiber';
 import { Line } from '@react-three/drei';
 import { div } from 'three/tsl';
 
-function LineComp() {
+function LineComp({layer,polygons}) {
     const state = useContext(Context);
-    const arrayOfpolygonsPerLayer=state.arrayOfpolyonsArrayPerLayer
-    const polygonsArray = state.polyonsArrayPerLayer||[];
+    // const arrayOfpolygonsPerLayer=state.arrayOfpolyonsArrayPerLayer
+    // const polygonsArray = state.polyonsArrayPerLayer||[];
     // const [points,setPoint]=useState([])
     const points = [];
     
     // console.lo<g("polygons in array", polygonsArray);
-    for(let i=0;i<polygonsArray.length;i++){
-        const singlePolygon=polygonsArray[i];
+    for(let i=0;i<polygons[0].length;i++){
+        const singlePolygon=polygons[0][i];
         if (singlePolygon && singlePolygon.length > 0) {
         // const localPointsArray=[];
         for (let i = 0; i < singlePolygon.length; i++) {

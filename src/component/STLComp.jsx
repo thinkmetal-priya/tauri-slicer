@@ -48,7 +48,7 @@ const STLComp = ({ meshRef }) => {
 
   return geom ? (
     <mesh ref={meshRef} geometry={geom} position={[-50, positionY, -50]}>
-      <meshStandardMaterial color="red" transparent opacity={0.01} />
+      <meshStandardMaterial color="red" opacity={0.5} />
     </mesh>
   ) : null;
 };

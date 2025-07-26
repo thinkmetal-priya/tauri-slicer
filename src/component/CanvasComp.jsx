@@ -4,7 +4,8 @@ import STLComp from "./STLComp";
 import { OrbitControls } from "@react-three/drei";
 import Bed from "./Bed";
 import DebugComp from "./DebugComp";
-import LineComp from "./LineComp";
+// import LineComp from "./LineComp";
+import Layers from "./Layers";
 const CanvasComp = ({ meshRef }) => {
   return (
     <Canvas
@@ -26,7 +27,7 @@ const CanvasComp = ({ meshRef }) => {
       <Bed />
       <STLComp meshRef={meshRef} />
       {/* <DebugComp/> */}
-      <LineComp/>
+      <Layers/>
     </Canvas>
   );
 };
