@@ -11,7 +11,7 @@ function LineComp({layer,polygons}) {
     // const [points,setPoint]=useState([])
     const points = [];
     
-    // console.lo<g("polygons in array", polygonsArray);
+    console.log("polygons in array", polygons);
     for(let i=0;i<polygons[0].length;i++){
         const singlePolygon=polygons[0][i];
         if (singlePolygon && singlePolygon.length > 0) {
