@@ -31,10 +31,7 @@ const MainContent = () => {
   };
 
   const handleSlice = async () => {
-    // const geometry = state.geometry;
-    // const totalVertices = geometry.attributes.position.count;
-
-    // console.log("value of total vertices", totalVertices);
+    
     if (meshRef.current && meshRef.current.geometry) {
       const geometry = meshRef.current.geometry;
       if (!geometry?.attributes?.position) {
@@ -103,26 +100,7 @@ const MainContent = () => {
    
         }
 
-      
-        // const pointsArray = [];
-        // Object.keys(verticesToPointsArray).forEach((key) => {
-        //   const points = verticesToPointsArray[key];
-          
-        //   for (let i = 0; i < points.length; i += 3) {
-        //     const x = points[i];
-        //     const y = points[i + 1];
-        //     const z = points[i + 2];
-        //     pointsArray.push(x, y, z);
-        //   } 
-        
-        // })
-        // dispatch({
-        //     type: "POLYGON_VERTICES_DEBUG",
-        //     payload: {
-          
-        //       pointsArray,
-        //     },
-        //   });
+
       } catch (error) {
         console.error("Error during slicing:", error);
         return;

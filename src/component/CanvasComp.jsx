@@ -9,7 +9,7 @@ import Layers from "./Layers";
 const CanvasComp = ({ meshRef }) => {
   return (
     <Canvas
-      camera={{ position: [0, 0, 300], near: 1, far: 1000 }}
+      camera={{ position: [0, 100, 300], near: 100, far: 1000 }}
       style={{ width: "100vw", height: "100vh" }}
     >
       <ambientLight intensity={Math.PI / 2} />
@@ -26,7 +26,7 @@ const CanvasComp = ({ meshRef }) => {
 
       <Bed />
       <STLComp meshRef={meshRef} />
-      {/* <DebugComp/> */}
+   
       <Layers/>
     </Canvas>
   );
