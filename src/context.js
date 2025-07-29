@@ -10,7 +10,12 @@ import {
 POLYGON_VERTICES_DEBUG,
 POLYGONS_ARRAY_PER_LAYER,
 ARRAY_OF_POLYGONS_ARRAY_PER_LAYER,
+LAYER_HEIGHT,
+TOTAL_LAYERS,
+// MIN_VAL_OF_RANGE,
+// MIN_VAL_OF_RANGE,
 } from "./constants/actions";
+import Layers from "./component/Layers";
 
 export const initialState = {
   file: null,
@@ -22,6 +27,9 @@ export const initialState = {
   polygonVerticesDebug: null,
   polyonsArrayPerLayer:[],
   arrayOfpolyonsArrayPerLayer:[],
+  layerHeight:0.5,
+  totalLayers:null,
+
 };
 //  reducer fucntion
 export function reducer(state, action) {
@@ -54,6 +62,12 @@ export function reducer(state, action) {
       ...state.arrayOfpolyonsArrayPerLayer,
       action.payload,
     ],}
+    }
+    case LAYER_HEIGHT:{
+      return{...state,layerHeight:action.payload}
+    }
+    case TOTAL_LAYERS:{
+      return {...state,totalLayers:action.payload}
     }
     default: {
       throw new Error("Action not registered:" + action.type);

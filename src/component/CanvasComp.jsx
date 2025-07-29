@@ -9,10 +9,10 @@ import Layers from "./Layers";
 const CanvasComp = ({ meshRef }) => {
   return (
     <Canvas
-      camera={{ position: [0, 100, 300], near: 100, far: 1000 }}
-      style={{ width: "100vw", height: "100vh" }}
+      camera={{ position: [0, 100, 300], near: 0.002, far: 5000 }}
+      style={{ width: "100vw", height: "100vh" ,color:'#808080'}}
     >
-      <ambientLight intensity={Math.PI / 2} />
+      <ambientLight intensity={Math.PI} color={"white"} />
       <directionalLight color="white" position={[0, 0, 5]} />
       <spotLight
         position={[10, 10, 10]}
@@ -28,6 +28,7 @@ const CanvasComp = ({ meshRef }) => {
       <STLComp meshRef={meshRef} />
    
       <Layers/>
+      
     </Canvas>
   );
 };

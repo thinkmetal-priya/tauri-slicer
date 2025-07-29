@@ -4,12 +4,14 @@ import CanvasComp from "./CanvasComp";
 // import Slider from "./Slider";
 import { useContext, useState } from "react";
 import { Context, DispatchCtx } from "../context";
-import { FILE, TOTALVERTICES } from "../constants/actions";
+import { FILE, TOTALVERTICES ,LAYER_HEIGHT, TOTAL_LAYERS} from "../constants/actions";
 import { useRef } from "react";
 // import sliceMesh from "../utils/sliceMesh";
 // import { useEffect } from "react";
 // When using the Tauri API npm package:
 import { invoke } from "@tauri-apps/api/core";
+import Loader from "./Loader";
+import LayerSlider from "./LayerSlider";
 // When using the Tauri global script (if not using the npm package)
 // Be sure to set `app.withGlobalTauri` in `tauri.conf.json` to true
 // const invoke = window.__TAURI__.core.invoke;
@@ -21,6 +23,7 @@ const MainContent = () => {
   const state = useContext(Context);
   const dispatch = useContext(DispatchCtx);
   const meshRef = useRef();
+  const [loader,setLoader]=useState(false);
   const handleFileInput = (e) => {
     const file = e.target.files[0];
     const objUrl = window.URL.createObjectURL(file);
@@ -29,9 +32,9 @@ const MainContent = () => {
       payload: objUrl,
     });
   };
-
+const total_layer=state.totalLayers;
   const handleSlice = async () => {
-    
+     setLoader((prev)=>!prev)
     if (meshRef.current && meshRef.current.geometry) {
       const geometry = meshRef.current.geometry;
       if (!geometry?.attributes?.position) {
@@ -42,6 +45,8 @@ const MainContent = () => {
       const vertices = geometry.attributes.position.array;
       const yMin = geometry.boundingBox.min.y;
       const yMax = geometry.boundingBox.max.y;
+      const layerHeight=state.layerHeight;
+      console.log("layer height",layerHeight);
       dispatch({
         type: TOTALVERTICES,
         payload: totalVertices,
@@ -58,7 +63,7 @@ const MainContent = () => {
 
             yMin: yMin,
             yMax,
-            yInc: 0.5,
+            yInc: layerHeight,
           },
         ];
         console.log("🚀 ~ handleSlice ~ invokeParams:", invokeParams);
@@ -69,7 +74,12 @@ const MainContent = () => {
        
         // let polygonsArrMap=null;
         // it is for each layer 
-   
+        const totalLayers=Object.keys(verticesToPointsArray).length;
+        dispatch({
+          type:TOTAL_LAYERS,
+          payload:totalLayers,
+        })
+        // console.log("length of obect key",length);
         for (const key of Object.keys(verticesToPointsArray)) {
            const arrayOfAllPolygonArrays = [];
           const ylayerValue = key;
@@ -80,7 +90,8 @@ const MainContent = () => {
             flatArray: pointsArray,
            
           });
-           console.log("value for each layer",polygonsArrMap);
+          setLoader(false)
+          //  console.log("value for each layer",polygonsArrMap);
           Object.keys(polygonsArrMap).forEach((key)=>{
             const arrayOfPolygons=polygonsArrMap[key];
           
@@ -111,35 +122,90 @@ const MainContent = () => {
   const [input, setInput] = useState(null);
   const [output, setOutput] = useState(null);
 
-  async function handleCompute() {
-    await invoke("my_sec_cus_command");
 
-    const multiply = await invoke("multiply_by_ten", { value: input });
 
-    console.log("multiply by ten", multiply);
-    setOutput(multiply);
+  const handleLayerChange=(e)=>{
+    
+    const layerYValue=+e.target.value;
+    console.log("layer input  value ",layerYValue);
+      dispatch({
+        type:LAYER_HEIGHT,
+        payload:layerYValue,
+      })
   }
-
+  const handleReset=()=>{
+    console.log("clicked on reste button")
+  }
   return (
-    <>
-      <section>
-      
-        <div>
-          <label htmlFor="">choose File</label>
-          <input type="file" onChange={handleFileInput} />
-        </div>
-        <div>
-          <button onClick={handleSlice}>Slice</button>
-        </div>
-        <div>
-          <CanvasComp meshRef={meshRef} />
-        </div>
-        
+      <section className="main-container">
+        {/*  left control panel */}
+               <section className="left-control-panel">
+                <div >
+                  {/* input for importing the file */}
+                  <div style={{display:"flex", flexDirection:'column', width:'100%'}}>
+                      <label htmlFor="">Import File</label>
+                      <input type="file" onChange={handleFileInput}  />
+                  </div>
+                  {/* input for layer height */}
+                  <div style={{display:"flex", flexDirection:'column', width:'100%'}}>  
+                    <label htmlFor="">Layer Height</label>
+                    <input size="5" type="text" spellCheck="false" name="" id=""  />
+                  </div>
+                  {/* input for selcting the number of top layer  */}
+                  <div style={{display:"flex", flexDirection:'column', width:'100%'}}>  
+                    <label htmlFor=""> Top Layer</label>
+                    <input size="5" type="text" spellCheck="false" name="" id="" />
+                  </div>
+                  {/* Input for the numbert of base layer you want */}
+                  <div style={{display:"flex", flexDirection:'column', width:'100%'}}>  
+                    <label htmlFor="">Base Layer</label>
+                    <input size="5" type="text" spellCheck="false" name="" id=""/>
+                  </div>
+
+
+                  <div style={{display:"flex", flexDirection:'column', width:'100%'}}>  
+                    <label htmlFor="">Fill Density</label>
+                    <input size="5" type="text" spellCheck="false" name="" id="" />
+                  </div>
+                  <div style={{display:"flex", flexDirection:'column', width:'100%'}}>  
+                        <label htmlFor="cars">Fill pattern</label>
+                        <select name="fill-pattern" id="cars">
+                          <option value="linear">Linear</option>
+                          <option value="hex">Hex</option>
+                          <option value="grid">Grid</option>
+                          <option value="taingle">Traingle</option>
+                          <option value="gyroid">Gyroid</option>
+                
+                        </select>
+                  </div>
+                  
+                </div>
+                <div title="this is container for all the button">
+                  <button onClick={handleSlice}>Slice</button>
+                  <button onClick={handleReset}>Reset</button>
+                </div>
+                  {loader ? <Loader/>: " "} 
+              </section>
+                {/* right section  */}
+                <section className="right-panel">
+               {total_layer?  <LayerSlider/>:""}
+                  
+                      <CanvasComp meshRef={meshRef} />
+                </section>
       </section>
+            
+        
+    
       
-    </>
+      
+    
+
+      
+
   );
 };
 
 export default MainContent;
 
+//  have the left bar 
+//   layer height--> top layer--> base layer

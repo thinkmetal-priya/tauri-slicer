@@ -12,7 +12,7 @@ function Bed({ url }) {
   });
 
   return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 3.5, -120]}>
+    <mesh rotation={[-Math.PI / 2,0, 0]} position={[0, 0, -120]}>
       <primitive object={obj} />
       <ambientLight intensity={0.4} />
       <pointLight position={[-80, -250, 1]} intensity={999} color={0xffffff} />
