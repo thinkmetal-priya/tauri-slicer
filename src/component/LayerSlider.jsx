@@ -11,14 +11,10 @@ function LayerSlider() {
     const dispatch=useContext(DispatchCtx)
     const minVal=state.minValOfRange;
     const maxVal=state.totalLayers;
-    // console.log("max value of range",maxVal);
+  
   const [range, setRange] = useState([minVal, maxVal]);
 
-// useEffect(()=>{
-//     setRange([minVal,maxVal])
-//      console.log("value of range",range)
-       
-// },[maxVal,minVal])
+
 
   const handleRangeChange = ([min, max]) => {
  if (min > max) return;
@@ -39,16 +35,7 @@ function LayerSlider() {
 
 
 
-  // const decreaseRange = () => {
-  //   setRange(([min, max]) => [
-  //     Math.max(0, min - 1),
-  //     max
-  //   ]);
-  //     dispatch({
-  //       type: MIN_VAL_OF_RANGE,
-  //       payload: range[0], 
-  //     });
-  // };
+
 
   const decreaseRange = () => {
   setRange(([min, max]) => {
@@ -59,16 +46,7 @@ function LayerSlider() {
 };
 
 
-  // const increaseRange = () => {
-  //   setRange(([min, max]) => [
-  //     min,
-  //     Math.min(maxVal, max + 1)
-  //   ]);
-  //   dispatch({
-  //         type: MAX_VAL_OF_RANGE,
-  //         payload: range[1],
-  //       });
-  // };
+
 const increaseRange = () => {
   setRange(([min, max]) => {
     const newMax = Math.min(maxVal, max + 1);

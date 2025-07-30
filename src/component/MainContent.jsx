@@ -12,7 +12,8 @@ import { useRef } from "react";
 // When using the Tauri API npm package:
 import { invoke } from "@tauri-apps/api/core";
 import Loader from "./Loader";
-import LayerSlider from "./LayerSlider";
+// import LayerSlider from "./LayerSlider";
+import SingleLayerSlider from "./SingleLayerSlider";
 // When using the Tauri global script (if not using the npm package)
 // Be sure to set `app.withGlobalTauri` in `tauri.conf.json` to true
 // const invoke = window.__TAURI__.core.invoke;
@@ -45,6 +46,7 @@ const total_layer=state.totalLayers;
       }
       const totalVertices = geometry.attributes.position.count;
       const vertices = geometry.attributes.position.array;
+      console.log("geom",geometry)
       const yMin = geometry.boundingBox.min.y;
       const yMax = geometry.boundingBox.max.y;
       const layerHeight=state.layerHeight;
@@ -74,20 +76,15 @@ const total_layer=state.totalLayers;
         const verticesToPointsArray = await invoke(...invokeParams);
         console.log("value of verticesToPoints array", verticesToPointsArray); 
        
-        // let polygonsArrMap=null;
-        // it is for each layer 
+      
         const totalLayers=Object.keys(verticesToPointsArray).length;
         dispatch({
           type:TOTAL_LAYERS,
           payload:totalLayers,
         })
-         dispatch({
-          type:MAX_VAL_OF_RANGE,
-          payload:totalLayers,
-        })
-        // console.log("length of obect key",length);
+   
         const wholeLayerData=[];
-        for (const key of Object.keys(verticesToPointsArray)) {
+        for (const key of Object.keys(verticesToPointsArray).sort((a,b)=>+a-+b)) {
            const arrayOfAllPolygonArrays = [];
           const ylayerValue = key;
           const pointsArray = verticesToPointsArray[key];
@@ -98,7 +95,9 @@ const total_layer=state.totalLayers;
            
           });
           setLoader(false)
-          //  console.log("value for each layer",polygonsArrMap);
+           console.log("value for each layer",polygonsArrMap);
+    
+
           Object.keys(polygonsArrMap).forEach((key)=>{
             const arrayOfPolygons=polygonsArrMap[key];
           
@@ -110,7 +109,7 @@ const total_layer=state.totalLayers;
           });
           arrayOfAllPolygonArrays.push(arrayOfPolygons);
           })
-          
+          console.log("value of array fo all poly",arrayOfAllPolygonArrays)
           dispatch({
             type:'ARRAY_OF_POLYGONS_ARRAY_PER_LAYER',
             payload:arrayOfAllPolygonArrays
@@ -223,7 +222,7 @@ const handleVisibility =()=>{
               </section>
                 {/* right section  */}
                 <section className="right-panel">
-               {total_layer?  <LayerSlider/>:""}
+               {total_layer?  <SingleLayerSlider/>:""}
                   
                       <CanvasComp meshRef={meshRef} />
                 </section>
@@ -244,3 +243,4 @@ export default MainContent;
 
 //  have the left bar 
 //   layer height--> top layer--> base layer
+// 20/0.5

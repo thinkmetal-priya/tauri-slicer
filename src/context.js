@@ -17,6 +17,7 @@ TOTAL_LAYERS,
 SEMI_TRANSPARENT,
 MIN_VAL_OF_RANGE,
 MAX_VAL_OF_RANGE,
+CURRENT_LAYER_INDEX,
 } from "./constants/actions";
 import Layers from "./component/Layers";
 
@@ -37,6 +38,7 @@ export const initialState = {
   semiTransparent:false,
   minValOfRange:0,
   maxValOfRange:null,
+  currentLayerIndex:0,
 
 };
 //  reducer fucntion
@@ -100,6 +102,11 @@ export function reducer(state, action) {
       case MAX_VAL_OF_RANGE:{
       return {
         ...state,maxValOfRange:action.payload
+      }
+    }
+    case CURRENT_LAYER_INDEX:{
+      return {
+        ...state,currentLayerIndex:action.payload
       }
     }
     default: {

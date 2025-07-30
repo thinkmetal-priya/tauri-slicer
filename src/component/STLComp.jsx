@@ -4,10 +4,10 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { useContext } from "react";
 import { Context, DispatchCtx } from "../context";
 import { GEOMETRY } from "../constants/actions";
-
+import { useTexture } from "@react-three/drei";
 const STLComp = ({ meshRef }) => {
   const state = useContext(Context);
-
+const matcapTexture=useTexture('src/assets/texture/2A2A2A_DBDBDB_6A6A6A_949494.png')
   const dispatch = useContext(DispatchCtx);
  const transparent =state.semiTransparent;
   const [geom, setGeom] = useState(null);
@@ -49,8 +49,8 @@ const STLComp = ({ meshRef }) => {
   }
 
   return geom ? (
-    <mesh ref={meshRef} geometry={geom} position={[0, 0, 0]}>
-      <meshStandardMaterial color="red"   transparent opacity={state.semiTransparent? 0.5:1} />
+    <mesh ref={meshRef} geometry={geom} position={[0, 0, 0]} >
+      <meshMatcapMaterial matcap={matcapTexture}  transparent opacity={state.semiTransparent? 0.2:1} />
     </mesh>
   ) : null;
 };

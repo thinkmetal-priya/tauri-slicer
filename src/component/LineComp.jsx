@@ -12,7 +12,7 @@ function LineComp({layer,polygons}) {
   Array.isArray(arr) &&
   arr.flat().length > 0
 );
-console.log("value of filtered array",filtered);
+// console.log("value of filtered array",filtered);
     return (
   <>
     const len=polygons[0].length;
