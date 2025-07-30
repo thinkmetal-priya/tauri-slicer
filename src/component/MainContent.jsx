@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import * as THREE from "three";
 import CanvasComp from "./CanvasComp";
 // import Slider from "./Slider";
 import { useContext, useState } from "react";
 import { Context, DispatchCtx } from "../context";
-import { FILE, TOTALVERTICES ,LAYER_HEIGHT, TOTAL_LAYERS} from "../constants/actions";
+import { initialState } from "../context";
+import { FILE, TOTALVERTICES ,LAYER_HEIGHT, TOTAL_LAYERS,WHOLE_LAYERS_DATA,SEMI_TRANSPARENT, MAX_VAL_OF_RANGE} from "../constants/actions";
 import { useRef } from "react";
 // import sliceMesh from "../utils/sliceMesh";
 // import { useEffect } from "react";
@@ -24,6 +25,7 @@ const MainContent = () => {
   const dispatch = useContext(DispatchCtx);
   const meshRef = useRef();
   const [loader,setLoader]=useState(false);
+
   const handleFileInput = (e) => {
     const file = e.target.files[0];
     const objUrl = window.URL.createObjectURL(file);
@@ -79,7 +81,12 @@ const total_layer=state.totalLayers;
           type:TOTAL_LAYERS,
           payload:totalLayers,
         })
+         dispatch({
+          type:MAX_VAL_OF_RANGE,
+          payload:totalLayers,
+        })
         // console.log("length of obect key",length);
+        const wholeLayerData=[];
         for (const key of Object.keys(verticesToPointsArray)) {
            const arrayOfAllPolygonArrays = [];
           const ylayerValue = key;
@@ -103,14 +110,19 @@ const total_layer=state.totalLayers;
           });
           arrayOfAllPolygonArrays.push(arrayOfPolygons);
           })
+          
           dispatch({
             type:'ARRAY_OF_POLYGONS_ARRAY_PER_LAYER',
             payload:arrayOfAllPolygonArrays
           })
-      
+            wholeLayerData.push(arrayOfAllPolygonArrays);
    
         }
-
+        dispatch({
+          type:WHOLE_LAYERS_DATA,
+          payload:wholeLayerData,
+        })
+       
 
       } catch (error) {
         console.error("Error during slicing:", error);
@@ -134,13 +146,28 @@ const total_layer=state.totalLayers;
       })
   }
   const handleReset=()=>{
+    dispatch({
+    type: LAYER_HEIGHT,
+    payload: initialState.layerHeight,
+  });
+
     console.log("clicked on reste button")
   }
+const handleVisibility =()=>{
+  const currentVisibility = state.semiTransparent;
+  console.log("Clicked on handle visibility", currentVisibility);
+
+  dispatch({
+    type: SEMI_TRANSPARENT,
+    payload: !currentVisibility, // toggle the value
+  });
+};
+
   return (
       <section className="main-container">
         {/*  left control panel */}
                <section className="left-control-panel">
-                <div >
+                <div className="inputs">
                   {/* input for importing the file */}
                   <div style={{display:"flex", flexDirection:'column', width:'100%'}}>
                       <label htmlFor="">Import File</label>
@@ -149,7 +176,14 @@ const total_layer=state.totalLayers;
                   {/* input for layer height */}
                   <div style={{display:"flex", flexDirection:'column', width:'100%'}}>  
                     <label htmlFor="">Layer Height</label>
-                    <input size="5" type="text" spellCheck="false" name="" id=""  />
+                   <input
+                    size="5"
+                    type="text"
+                    spellCheck="false"
+                    id="layerHeight"
+                    value={state.layerHeight}
+                    onChange={handleLayerChange}
+                  />
                   </div>
                   {/* input for selcting the number of top layer  */}
                   <div style={{display:"flex", flexDirection:'column', width:'100%'}}>  
@@ -180,11 +214,12 @@ const total_layer=state.totalLayers;
                   </div>
                   
                 </div>
-                <div title="this is container for all the button">
+                <div  className="btn-container">
                   <button onClick={handleSlice}>Slice</button>
                   <button onClick={handleReset}>Reset</button>
+                  <button onClick={handleVisibility}>Visibilty</button>
                 </div>
-                  {loader ? <Loader/>: " "} 
+                  {loader ? <Loader/>: ""} 
               </section>
                 {/* right section  */}
                 <section className="right-panel">

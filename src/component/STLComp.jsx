@@ -9,7 +9,7 @@ const STLComp = ({ meshRef }) => {
   const state = useContext(Context);
 
   const dispatch = useContext(DispatchCtx);
-
+ const transparent =state.semiTransparent;
   const [geom, setGeom] = useState(null);
   // const meshRef = useRef();
   let bbox = null;
@@ -37,7 +37,9 @@ const STLComp = ({ meshRef }) => {
       }
     );
   }, [state.file]);
-
+    useEffect(()=>{
+    console.log("value of transparent value in context",state.semiTransparent)
+  },[state.semiTransparent])
   if (geom) {
     geom.computeVertexNormals();
     geom.computeBoundingBox();
@@ -47,8 +49,8 @@ const STLComp = ({ meshRef }) => {
   }
 
   return geom ? (
-    <mesh ref={meshRef} geometry={geom} position={[-50, positionY, -50]}>
-      <meshStandardMaterial color="red" opacity={0.5} />
+    <mesh ref={meshRef} geometry={geom} position={[0, 0, 0]}>
+      <meshStandardMaterial color="red"   transparent opacity={state.semiTransparent? 0.5:1} />
     </mesh>
   ) : null;
 };

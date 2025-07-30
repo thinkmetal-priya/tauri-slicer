@@ -7,11 +7,16 @@ import LineCo from './LineCo';
 
 function LineComp({layer,polygons}) {
     const state = useContext(Context);
-
-
+    const len=polygons[0].length;
+    const filtered = polygons[0].filter(arr =>
+  Array.isArray(arr) &&
+  arr.flat().length > 0
+);
+console.log("value of filtered array",filtered);
     return (
   <>
-    {polygons[0].map((polygon, index) => {
+    const len=polygons[0].length;
+    {len>0 &&filtered.map((polygon, index) => {
       const points = [];
       for (let edge of polygon) {
         const [start, end] = edge;

@@ -12,8 +12,11 @@ POLYGONS_ARRAY_PER_LAYER,
 ARRAY_OF_POLYGONS_ARRAY_PER_LAYER,
 LAYER_HEIGHT,
 TOTAL_LAYERS,
-// MIN_VAL_OF_RANGE,
-// MIN_VAL_OF_RANGE,
+ SLICING_COMPLETE,
+ WHOLE_LAYERS_DATA,
+SEMI_TRANSPARENT,
+MIN_VAL_OF_RANGE,
+MAX_VAL_OF_RANGE,
 } from "./constants/actions";
 import Layers from "./component/Layers";
 
@@ -29,6 +32,11 @@ export const initialState = {
   arrayOfpolyonsArrayPerLayer:[],
   layerHeight:0.5,
   totalLayers:null,
+  slicingComplete:false,
+  wholeLayerData:[],
+  semiTransparent:false,
+  minValOfRange:0,
+  maxValOfRange:null,
 
 };
 //  reducer fucntion
@@ -68,6 +76,31 @@ export function reducer(state, action) {
     }
     case TOTAL_LAYERS:{
       return {...state,totalLayers:action.payload}
+    }
+    case SLICING_COMPLETE:{
+      return {
+        ...state,slicingComplete:action.payload
+      }
+    }
+    case WHOLE_LAYERS_DATA:{
+      return {
+        ...state,wholeLayerData:action.payload
+      }
+    }
+    case SEMI_TRANSPARENT:{
+      return {
+        ...state,semiTransparent:action.payload
+      }
+    }
+      case MIN_VAL_OF_RANGE:{
+      return {
+        ...state,minValOfRange:action.payload
+      }
+    }
+      case MAX_VAL_OF_RANGE:{
+      return {
+        ...state,maxValOfRange:action.payload
+      }
     }
     default: {
       throw new Error("Action not registered:" + action.type);
