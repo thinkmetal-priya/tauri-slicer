@@ -2,18 +2,18 @@ use crate::polygon::poly::get_line_seg;
 // use crate::polygon::make_polygon::get_all_polygons;
 
 use ordered_float::OrderedFloat;
-use std::{collections::HashMap, f32::INFINITY};
+use std::{collections::HashMap, f64::INFINITY};
 
 #[tauri::command]
 pub fn vertices_to_points(
-    array: Vec<f32>,
-    y_min: f32,
-    y_max: f32,
-    y_inc: f32,
+    array: Vec<f64>,
+    y_min: f64,
+    y_max: f64,
+    y_inc: f64,
 ) -> serde_json::Value {
-    let mut inter_section_planes: Vec<f32> = vec![];
+    let mut inter_section_planes: Vec<f64> = vec![];
 
-    let mut polygon_vertices: HashMap<OrderedFloat<f32>, Vec<f32>> = HashMap::new();
+    let mut polygon_vertices: HashMap<OrderedFloat<f64>, Vec<f64>> = HashMap::new();
 
     let mut y_slicing_index = y_min;
     while y_slicing_index <= y_max {
@@ -37,7 +37,7 @@ pub fn vertices_to_points(
                 continue;
             }
 
-            let mut intersections: [(f32, f32, f32); 2] = [
+            let mut intersections: [(f64, f64, f64); 2] = [
                 (INFINITY, INFINITY, INFINITY),
                 (INFINITY, INFINITY, INFINITY),
             ];
@@ -84,7 +84,7 @@ pub fn vertices_to_points(
     // let mut all_layer_edges = HashMap::new();
 
     // for (y_key, entry) in &polygon_vertices {
-    //     // entry is Vec<f32> (flat array of points)
+    //     // entry is Vec<f64> (flat array of points)
     //     let edges_map = get_line_seg(*y_key, entry.clone());
 
     //     // all_layer_edges.extend(edges_map);
@@ -99,8 +99,9 @@ pub fn vertices_to_points(
     //     "Total intersection planes with polygons: {}",
     //     polygon_vertices.len()
     // );
-    // Convert HashMap<OrderedFloat<f32>, Vec<f32>> to a serializable map
-    let serializable_map: HashMap<String, Vec<f32>> = polygon_vertices
+    // Convert HashMap<OrderedFloat<f64>, Vec<f64>> to a serializable map
+    // reduce the number of points ny checking collinearity de-duplication
+    let serializable_map: HashMap<String, Vec<f64>> = polygon_vertices
         .into_iter()
         .map(|(k, v)| (k.to_string(), v))
         .collect();
@@ -119,9 +120,9 @@ pub fn vertices_to_points(
 // use ordered_float::OrderedFloat;
 // use std::collections::HashMap;
 // #[tauri::command]
-// pub fn vertices_to_points(array: Vec<f32>, y_min: f32, y_max: f32, y_inc: f32) {
-//     let mut inter_section_planes: Vec<f32> = vec![];
-//     let mut polygon_vertices: HashMap<OrderedFloat<f32>, Vec<f32>> = HashMap::new();
+// pub fn vertices_to_points(array: Vec<f64>, y_min: f64, y_max: f64, y_inc: f64) {
+//     let mut inter_section_planes: Vec<f64> = vec![];
+//     let mut polygon_vertices: HashMap<OrderedFloat<f64>, Vec<f64>> = HashMap::new();
 
 //     let mut y_slicing_index = y_min;
 //     while y_slicing_index <= y_max {

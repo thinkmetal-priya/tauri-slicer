@@ -11,6 +11,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             geometry::slicing::vertices_to_points,
             polygon::poly::get_line_seg,
+            polygon::calc_area::calculate_polygon_perimeter
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

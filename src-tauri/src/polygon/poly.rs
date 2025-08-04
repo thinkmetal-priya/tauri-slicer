@@ -1,13 +1,15 @@
 use ordered_float::OrderedFloat;
 use std::collections::HashSet;
+
+use std::f64::EPSILON;
 use std::{collections::HashMap, f32::INFINITY}; // Add this import
-pub type Point = [f32; 3];
+pub type Point = [f64; 3];
 pub type Edges = (Point, Point);
 pub type Polygon = Vec<Edges>;
 pub type Polygons = Vec<Polygon>;
 
-fn vectors_equal(a: [f32; 3], b: [f32; 3]) -> bool {
-    const TOLERANCE: f32 = 0.0001;
+fn vectors_equal(a: [f64; 3], b: [f64; 3]) -> bool {
+    const TOLERANCE: f64 = EPSILON;
     (a[0] - b[0]).abs() < TOLERANCE
         && (a[1] - b[1]).abs() < TOLERANCE
         && (a[2] - b[2]).abs() < TOLERANCE
@@ -73,7 +75,7 @@ pub fn get_all_polygons(array_of_edges: Vec<Edges>) -> Polygons {
 #[tauri::command]
 pub fn get_line_seg(
     layer_y_value: String,
-    flat_array: Vec<f32>,
+    flat_array: Vec<f64>,
 ) -> HashMap<String, Vec<Vec<Edges>>> {
     let mut i = 0;
     // array of edges
