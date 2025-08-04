@@ -5,12 +5,7 @@ import { Context } from "../context";
 const LineCo = ({ points, color = "blue" }) => {
   const state = useContext(Context);
 
-  const transformedPoints = points.map(([x, y, z]) => [
-    x * 2,
-
-    y * 2 + state.positionY,
-    z * 2,
-  ]);
+  const transformedPoints = points.map(([x, y, z]) => [x, y, z]);
 
   return (
     <group>

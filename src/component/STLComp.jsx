@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
+import { useContext } from "react";
+import { Context, DispatchCtx } from "../context";
+import { GEOMETRY } from "../constants/actions";
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
-import { Context, DispatchCtx } from "../context";
-import { GEOMETRY, POSITIONY } from "../constants/actions";
 
 const STLComp = ({ meshRef }) => {
   const state = useContext(Context);
@@ -14,14 +15,15 @@ const STLComp = ({ meshRef }) => {
   );
 
   const transparent = state.semiTransparent;
-  const positionY = state.positionY; // Loaded from context
-  const [geom, setGeom] = useState(null);
+  const [geometry, setGeometry] = useState(null);
+  const [positionY, setPositionY] = useState(0); // vertical lift
 
   useEffect(() => {
+    // if (!state.file) return;
     if (!state.file) {
-      if (geom) {
-        geom.dispose();
-        setGeom(null);
+      if (geometry) {
+        geometry.dispose();
+        setGeometry(null);
       }
       return;
     }
@@ -33,33 +35,35 @@ const STLComp = ({ meshRef }) => {
         geometry.computeVertexNormals();
         geometry.computeBoundingBox();
 
+        // === CENTER geometry in X and Z ===
+        const bbox = geometry.boundingBox;
         const center = new THREE.Vector3();
-        geometry.boundingBox.getCenter(center);
+        bbox.getCenter(center);
+        geometry.translate(-center.x, 0, -center.z); // horizontal center only
 
-        // Move model to center
-        geometry.translate(-center.x, -center.y, -center.z);
+        // === VERTICALLY lift to sit on the grid ===
+        geometry.computeBoundingBox(); // again after translating
+        const newMinY = geometry.boundingBox.min.y;
+        setPositionY(-newMinY); // this sets mesh position to lift it
 
-        // Move model to sit flat on grid
-        const minY = geometry.boundingBox.min.y - center.y;
-        dispatch({ type: POSITIONY, payload: -minY });
+        setGeometry(geometry);
 
-        setGeom(geometry);
-        dispatch({ type: GEOMETRY, payload: geometry });
+        dispatch({
+          type: GEOMETRY,
+          payload: geometry,
+        });
       },
       undefined,
-      (error) => console.error("STL load error:", error)
+      (error) => {
+        console.error("Error loading STL:", error);
+      }
     );
-  }, [state.file, state.positionY]);
+  }, [state.file]);
 
-  if (!geom) return null;
+  if (!geometry) return null;
 
   return (
-    <mesh
-      ref={meshRef}
-      geometry={geom}
-      position={[0, positionY, 0]}
-      scale={[2, 2, 2]}
-    >
+    <mesh ref={meshRef} geometry={geometry} position={[0, positionY, 0]}>
       <meshMatcapMaterial
         matcap={matcapTexture}
         transparent
