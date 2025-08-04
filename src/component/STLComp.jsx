@@ -18,7 +18,13 @@ const STLComp = ({ meshRef }) => {
   const [geom, setGeom] = useState(null);
 
   useEffect(() => {
-    if (!state.file) return;
+    if (!state.file) {
+      if (geom) {
+        geom.dispose();
+        setGeom(null);
+      }
+      return;
+    }
 
     const loader = new STLLoader();
     loader.load(
@@ -43,7 +49,7 @@ const STLComp = ({ meshRef }) => {
       undefined,
       (error) => console.error("STL load error:", error)
     );
-  }, [state.file]);
+  }, [state.file, state.positionY]);
 
   if (!geom) return null;
 
@@ -51,7 +57,7 @@ const STLComp = ({ meshRef }) => {
     <mesh
       ref={meshRef}
       geometry={geom}
-      position={[0, state.positionY, 0]}
+      position={[0, positionY, 0]}
       scale={[2, 2, 2]}
     >
       <meshMatcapMaterial
