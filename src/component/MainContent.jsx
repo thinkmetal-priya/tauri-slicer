@@ -18,6 +18,7 @@ import {
   CLEAR_FILE,
   INFILL_DENSITY,
   CURRENT_LAYER_INDEX,
+  LP,
 } from "../constants/actions";
 import { useRef } from "react";
 
@@ -62,11 +63,11 @@ const MainContent = () => {
       }
       const totalVertices = geometry.attributes.position.count;
       const vertices = geometry.attributes.position.array;
-      console.log("geom", geometry);
+      // console.log("geom", geometry);
       const yMin = geometry.boundingBox.min.y;
       const yMax = geometry.boundingBox.max.y;
       const layerHeight = state.layerHeight;
-      console.log("layer height", layerHeight);
+      // console.log("layer height", layerHeight);
       dispatch({
         type: TOTALVERTICES,
         payload: totalVertices,
@@ -90,7 +91,7 @@ const MainContent = () => {
         console.log("invokeParams", invokeParams);
 
         const verticesToPointsArray = await invoke(...invokeParams);
-        console.log("value of verticesToPoints array", verticesToPointsArray);
+        // console.log("value of verticesToPoints array", verticesToPointsArray);
 
         const totalLayers = Object.keys(verticesToPointsArray).length;
         dispatch({
@@ -102,10 +103,12 @@ const MainContent = () => {
         for (const key of Object.keys(verticesToPointsArray).sort(
           (a, b) => +a - +b
         )) {
-          const arrayOfAllPolygonArrays = [];
-
           const ylayerValue = key;
           const pointsArray = verticesToPointsArray[key];
+          const arrayOfAllPolygonArrays = {
+            ylayerValue: ylayerValue,
+            arrayOfPolygons: [],
+          };
           // if (ylayerValue === "15") {
           //   console.log(
           //     "value of pointsArray of layer 30",
@@ -119,29 +122,29 @@ const MainContent = () => {
             flatArray: pointsArray,
           });
           setLoader(false);
-          console.log("value for each layer, polygonArrMAp", polygonsArrMap);
+          // console.log("value for each layer, polygonArrMAp", polygonsArrMap);
 
           // in this log we're getting the y layer value
 
           Object.keys(polygonsArrMap).forEach((key) => {
             const arrayOfPolygons = polygonsArrMap[key];
-
+            // const ylayerValue = key;
             // console.log("aarray val of polygons",arrayVal);
             dispatch({
               type: "POLYGONS_ARRAY_PER_LAYER",
-              payload: arrayOfPolygons,
+              payload: { arrayOfPolygons, ylayerValue },
             });
-            arrayOfAllPolygonArrays.push(arrayOfPolygons);
+            arrayOfAllPolygonArrays.arrayOfPolygons.push(arrayOfPolygons);
           });
-          console.log("value of array fo all poly", arrayOfAllPolygonArrays); // this is for one layer
+          // console.log("value of array fo all poly", arrayOfAllPolygonArrays); // this is for one layer
           try {
             const arrayOfPolygonArea = await invoke(
               "calculate_polygon_perimeter",
               {
-                polygons: arrayOfAllPolygonArrays[0],
+                polygons: arrayOfAllPolygonArrays.arrayOfPolygons[0],
               }
             );
-            console.log("array of polygons area", arrayOfPolygonArea);
+            // console.log("array of polygons area", arrayOfPolygonArea);
           } catch (error) {
             console.error("Error invoking calculate_polygon_perimeter:", err);
           }
@@ -149,10 +152,17 @@ const MainContent = () => {
             type: "ARRAY_OF_POLYGONS_ARRAY_PER_LAYER",
             payload: arrayOfAllPolygonArrays,
           });
-
+          // console.log()
           wholeLayerData.push(arrayOfAllPolygonArrays);
           // wholeLayerData.push(arrayOfPolygonArea)
         }
+        dispatch({
+          type: LP,
+          payload: new THREE.Plane(
+            new THREE.Vector3(0, -1, 0),
+            wholeLayerData.length * state.layerHeight || 100
+          ),
+        });
 
         dispatch({
           type: WHOLE_LAYERS_DATA,
@@ -177,7 +187,7 @@ const MainContent = () => {
 
   const handleLayerChange = (e) => {
     const layerYValue = +e.target.value;
-    console.log("layer input  value ", layerYValue);
+    // console.log("layer input  value ", layerYValue);
     dispatch({
       type: LAYER_HEIGHT,
       payload: layerYValue,
@@ -185,7 +195,7 @@ const MainContent = () => {
   };
   const handleTopLayerChange = (e) => {
     const topLayerVal = +e.target.value;
-    console.log(" top layer input  value ", topLayerVal);
+    // console.log(" top layer input  value ", topLayerVal);
     dispatch({
       type: TOP_LAYERS,
       payload: topLayerVal,
@@ -193,7 +203,7 @@ const MainContent = () => {
   };
   const handleInfillDensityChange = (e) => {
     const infillDensity = +e.target.value;
-    console.log("infill density value  ", infillDensity);
+    // console.log("infill density value  ", infillDensity);
     dispatch({
       type: INFILL_DENSITY,
       payload: infillDensity,
@@ -215,7 +225,7 @@ const MainContent = () => {
       .map((layer, index) => ({ layer, index }))
       .filter(({ layer }) => Array.isArray(layer) && layer.flat().length > 0);
 
-    console.log("filtered array", filteredWhole);
+    // console.log("filtered array", filteredWhole);
     const target = filteredWhole.find((item) => item.index === currentLayer);
     navigator.clipboard
       .writeText(JSON.stringify(target.layer))
@@ -249,7 +259,7 @@ const MainContent = () => {
     //   type: SEMI_TRANSPARENT,
     //   payload: initialState.semiTransparent,
     // });
-    console.log("clicked on reste button");
+    // console.log("clicked on reste button");
   };
   const handleVisibility = () => {
     const currentVisibility = state.semiTransparent;
@@ -297,14 +307,14 @@ const MainContent = () => {
           <div
             style={{ display: "flex", flexDirection: "column", width: "100%" }}
           >
+            {/*  Hide the negative number  */}
             <label htmlFor="">Layer Height</label>
             <input
-              size="5"
-              type="text"
-              spellCheck="false"
+              type="number"
               id="layerHeight"
               value={state.layerHeight}
               onChange={handleLayerChange}
+              className="no-spinner"
             />
           </div>
           {/* input for selcting the number of top layer  */}

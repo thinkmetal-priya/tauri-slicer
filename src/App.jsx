@@ -9,9 +9,9 @@ import MainContent from "./component/MainContent";
 import { initialState, reducer, Context, DispatchCtx } from "./context";
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  useEffect(() => {
-    console.log("states in app", state);
-  }, [state]);
+  // useEffect(() => {
+  //   console.log("states in app", state);
+  // }, [state]);
   return (
     <Context.Provider value={state}>
       <DispatchCtx.Provider value={dispatch}>

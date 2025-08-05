@@ -23,6 +23,7 @@ import {
   POSITIONY,
   CLEAR_FILE,
   INFILL_DENSITY,
+  LP,
 } from "./constants/actions";
 import Layers from "./component/Layers";
 
@@ -31,6 +32,7 @@ export const initialState = {
   geometry: null,
   slicing: false,
   totalVertices: null,
+  localPlane: null,
   vertices: [],
   segments: [],
   polygonVerticesDebug: null,
@@ -137,6 +139,9 @@ export function reducer(state, action) {
     }
     case POSITIONY: {
       return { ...state, positionY: action.payload };
+    }
+    case LP: {
+      return { ...state, localPlane: action.payload };
     }
     case CLEAR_FILE:
       return {

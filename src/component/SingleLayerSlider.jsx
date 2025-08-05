@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
-import ReactSlider from 'react-slider';
-import { Context, DispatchCtx } from '../context';
-import { CURRENT_LAYER_INDEX } from '../constants/actions';
+import React, { useState, useEffect, useContext } from "react";
+import * as THREE from "three";
+import ReactSlider from "react-slider";
+import { Context, DispatchCtx } from "../context";
+import { CURRENT_LAYER_INDEX, LP } from "../constants/actions";
 
 function SingleLayerSlider() {
   const state = useContext(Context);
@@ -12,16 +13,26 @@ function SingleLayerSlider() {
   const [layer, setLayer] = useState(currentLayer);
 
   const handleSliderChange = (val) => {
-    console.log("value in handle Slice",val)
+    console.log("value in handle Slice", val);
     setLayer(val);
+    if (layer !== 0) {
+      dispatch({
+        type: LP,
+        payload: new THREE.Plane(
+          new THREE.Vector3(0, -1, 0),
+          val * state.layerHeight
+        ),
+      });
+    }
     dispatch({
       type: CURRENT_LAYER_INDEX,
       payload: val,
     });
   };
-  useEffect(()=>{
-    console.log("the value of current layer index",state.currentLayerIndex)
-  },[state.currentLayerIndex])
+
+  useEffect(() => {
+    console.log("the value of current layer index", state.currentLayerIndex);
+  }, [state.currentLayerIndex]);
 
   const decreaseLayer = () => {
     const newVal = Math.max(0, layer - 1);
@@ -35,12 +46,34 @@ function SingleLayerSlider() {
     dispatch({ type: CURRENT_LAYER_INDEX, payload: newVal });
   };
 
+  useEffect(() => {
+    if (layer !== 0) {
+      dispatch({
+        type: LP,
+        payload: new THREE.Plane(
+          new THREE.Vector3(0, -1, 0),
+          layer * state.layerHeight
+        ),
+      });
+    }
+  }, [layer]);
+
   return (
     <div>
-      <div style={{ display: 'flex', width: '80%', alignItems: 'center', margin: '0 auto', paddingTop: '10px' }}>
-        <button onClick={decreaseLayer} style={{ marginRight: '10px' }}>◀</button>
+      <div
+        style={{
+          display: "flex",
+          width: "80%",
+          alignItems: "center",
+          margin: "0 auto",
+          paddingTop: "10px",
+        }}
+      >
+        <button onClick={decreaseLayer} style={{ marginRight: "10px" }}>
+          ◀
+        </button>
 
-        <div style={{ flex: 1, padding: '0 10px' }}>
+        <div style={{ flex: 1, padding: "0 10px" }}>
           <ReactSlider
             className="horizontal-slider"
             thumbClassName="thumb"
@@ -52,10 +85,12 @@ function SingleLayerSlider() {
           />
         </div>
 
-        <button onClick={increaseLayer} style={{ marginLeft: '10px' }}>▶</button>
+        <button onClick={increaseLayer} style={{ marginLeft: "10px" }}>
+          ▶
+        </button>
       </div>
 
-      <div style={{ marginTop: '20px', textAlign: 'center' }}>
+      <div style={{ marginTop: "20px", textAlign: "center" }}>
         <strong>Current Layer:</strong> {layer}
       </div>
 

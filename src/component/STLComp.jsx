@@ -17,7 +17,9 @@ const STLComp = ({ meshRef }) => {
   const transparent = state.semiTransparent;
   const [geometry, setGeometry] = useState(null);
   const [positionY, setPositionY] = useState(0); // vertical lift
-
+  useEffect(() => {
+    console.log("LP", state?.localPlane);
+  }, [state?.localPlane]);
   useEffect(() => {
     // if (!state.file) return;
     if (!state.file) {
@@ -62,11 +64,36 @@ const STLComp = ({ meshRef }) => {
 
   if (!geometry) return null;
 
-  return (
+  return state.localPlane ? (
+    <group>
+      {/* Solid mesh below the plane */}
+      <mesh ref={meshRef} geometry={geometry} position={[0, positionY, 0]}>
+        <meshMatcapMaterial
+          side={2}
+          matcap={matcapTexture}
+          transparent
+          opacity={transparent ? 0.2 : 1}
+          clippingPlanes={state.localPlane && [state.localPlane]}
+          clipShadows
+        />
+      </mesh>
+
+      {/* Transparent mesh above the plane */}
+      <mesh ref={meshRef} geometry={geometry} position={[0, positionY, 0]}>
+        <meshMatcapMaterial
+          side={2}
+          matcap={matcapTexture}
+          transparent
+          opacity={0.2}
+        />
+      </mesh>
+    </group>
+  ) : (
     <mesh ref={meshRef} geometry={geometry} position={[0, positionY, 0]}>
       <meshMatcapMaterial
+        side={2}
         matcap={matcapTexture}
-        transparent
+        transparent={false}
         opacity={transparent ? 0.2 : 1}
       />
     </mesh>
