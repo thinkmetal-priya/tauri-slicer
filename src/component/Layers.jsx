@@ -46,9 +46,9 @@ const Layers = () => {
     state.currentLayerIndex,
   ]);
 
-  useEffect(() => {
-    console.log("[[[[[[[[[[[[", l);
-  }, [l]);
+  // useEffect(() => {
+  //   console.log("[[[[[[[[[[[[", l);
+  // }, [l]);
 
   // const wholeLayerData = state?.wholeLayerData;
   // if (!wholeLayerData) return null;

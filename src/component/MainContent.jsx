@@ -19,6 +19,7 @@ import {
   INFILL_DENSITY,
   CURRENT_LAYER_INDEX,
   LP,
+  ARRAY_OF_POLYGONS_ARRAY_PER_LAYER,
 } from "../constants/actions";
 import { useRef } from "react";
 
@@ -33,17 +34,13 @@ const MainContent = () => {
   const meshRef = useRef();
   const [loader, setLoader] = useState(false);
   const inputRef = useRef(null);
-  // const handleFileInput = (e) => {
-  //   const file = e.target.files[0];
-  //   const objUrl = window.URL.createObjectURL(file);
-  //   dispatch({
-  //     type: FILE,
-  //     payload: objUrl,
-  //   });
-  // };
+
   const handleFileInput = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    if (state.file) {
+      handleClear();
+    }
 
     const objUrl = window.URL.createObjectURL(file);
     dispatch({
@@ -285,10 +282,18 @@ const MainContent = () => {
       type: SEMI_TRANSPARENT,
       payload: initialState.semiTransparent,
     });
+    dispatch({
+      type: LP,
+      payload: initialState.localPlane,
+    });
+    dispatch({
+      type: ARRAY_OF_POLYGONS_ARRAY_PER_LAYER,
+      payload: initialState.arrayOfpolyonsArrayPerLayer,
+    });
 
-    if (inputRef.current) {
-      inputRef.current.value = "";
-    }
+    // if (inputRef.current) {
+    //   inputRef.current.value = "";
+    // }
   };
 
   return (
