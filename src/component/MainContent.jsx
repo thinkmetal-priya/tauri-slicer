@@ -16,21 +16,15 @@ import {
   TOP_LAYERS,
   BASE_LAYERS,
   CLEAR_FILE,
+  INFILL_DENSITY,
+  CURRENT_LAYER_INDEX,
 } from "../constants/actions";
 import { useRef } from "react";
-// import sliceMesh from "../utils/sliceMesh";
-// import { useEffect } from "react";
-// When using the Tauri API npm package:
+
 import { invoke } from "@tauri-apps/api/core";
 import Loader from "./Loader";
-// import LayerSlider from "./LayerSlider";
-import SingleLayerSlider from "./SingleLayerSlider";
-// When using the Tauri global script (if not using the npm package)
-// Be sure to set `app.withGlobalTauri` in `tauri.conf.json` to true
-// const invoke = window.__TAURI__.core.invoke;
 
-// Invoke the command
-// invoke("my_custom_command");
+import SingleLayerSlider from "./SingleLayerSlider";
 
 const MainContent = () => {
   const state = useContext(Context);
@@ -38,14 +32,25 @@ const MainContent = () => {
   const meshRef = useRef();
   const [loader, setLoader] = useState(false);
   const inputRef = useRef(null);
+  // const handleFileInput = (e) => {
+  //   const file = e.target.files[0];
+  //   const objUrl = window.URL.createObjectURL(file);
+  //   dispatch({
+  //     type: FILE,
+  //     payload: objUrl,
+  //   });
+  // };
   const handleFileInput = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+
     const objUrl = window.URL.createObjectURL(file);
     dispatch({
       type: FILE,
       payload: objUrl,
     });
   };
+
   const total_layer = state.totalLayers;
   const handleSlice = async () => {
     setLoader((prev) => !prev);
@@ -101,12 +106,12 @@ const MainContent = () => {
 
           const ylayerValue = key;
           const pointsArray = verticesToPointsArray[key];
-          if (ylayerValue === "15") {
-            console.log(
-              "value of pointsArray of layer 30",
-              verticesToPointsArray[ylayerValue]
-            );
-          }
+          // if (ylayerValue === "15") {
+          //   console.log(
+          //     "value of pointsArray of layer 30",
+          //     verticesToPointsArray[ylayerValue]
+          //   );
+          // }
 
           // console.log("value of pointsArray", pointsArray);
           const polygonsArrMap = await invoke("get_line_seg", {
@@ -115,6 +120,8 @@ const MainContent = () => {
           });
           setLoader(false);
           console.log("value for each layer, polygonArrMAp", polygonsArrMap);
+
+          // in this log we're getting the y layer value
 
           Object.keys(polygonsArrMap).forEach((key) => {
             const arrayOfPolygons = polygonsArrMap[key];
@@ -157,7 +164,14 @@ const MainContent = () => {
       }
     }
   };
-
+  useEffect(() => {
+    if (!state.file) {
+      dispatch({
+        type: FILE,
+        payload: "/Users/priya/tauriSlicer/tauri-app/src/assets/cube(1).stl",
+      });
+    }
+  }, []);
   const [input, setInput] = useState(null);
   const [output, setOutput] = useState(null);
 
@@ -171,15 +185,23 @@ const MainContent = () => {
   };
   const handleTopLayerChange = (e) => {
     const topLayerVal = +e.target.value;
-    console.log("layer input  value ", topLayerVal);
+    console.log(" top layer input  value ", topLayerVal);
     dispatch({
       type: TOP_LAYERS,
       payload: topLayerVal,
     });
   };
+  const handleInfillDensityChange = (e) => {
+    const infillDensity = +e.target.value;
+    console.log("infill density value  ", infillDensity);
+    dispatch({
+      type: INFILL_DENSITY,
+      payload: infillDensity,
+    });
+  };
   const handleBaseLayerChange = (e) => {
     const baseLayerVal = +e.target.value;
-    console.log("layer input  value ", baseLayerVal);
+    console.log(" base layer input  value ", baseLayerVal);
     dispatch({
       type: BASE_LAYERS,
       payload: baseLayerVal,
@@ -219,6 +241,14 @@ const MainContent = () => {
       payload: initialState.baseLayers,
     });
 
+    dispatch({
+      type: INFILL_DENSITY,
+      payload: initialState.infillDensity,
+    });
+    // dispatch({
+    //   type: SEMI_TRANSPARENT,
+    //   payload: initialState.semiTransparent,
+    // });
     console.log("clicked on reste button");
   };
   const handleVisibility = () => {
@@ -233,6 +263,19 @@ const MainContent = () => {
   const handleClear = () => {
     console.log("clear file button is clicked ");
     dispatch({ type: CLEAR_FILE });
+    dispatch({
+      type: CURRENT_LAYER_INDEX,
+      payload: initialState.currentLayerIndex,
+    });
+    dispatch({
+      type: TOTAL_LAYERS,
+      payload: initialState.totalLayers,
+    });
+    dispatch({
+      type: SEMI_TRANSPARENT,
+      payload: initialState.semiTransparent,
+    });
+
     if (inputRef.current) {
       inputRef.current.value = "";
     }
@@ -282,7 +325,7 @@ const MainContent = () => {
           <div
             style={{ display: "flex", flexDirection: "column", width: "100%" }}
           >
-            <label htmlFor="">Base Layer</label>
+            <label htmlFor="">Bottom Layer</label>
             <input
               size="5"
               type="text"
@@ -296,10 +339,17 @@ const MainContent = () => {
           <div
             style={{ display: "flex", flexDirection: "column", width: "100%" }}
           >
-            <label htmlFor="">Fill Density</label>
-            <input size="5" type="text" spellCheck="false" name="" id="" />
+            <label htmlFor="">Infill Density</label>
+            <input
+              size="5"
+              type="text"
+              spellCheck="false"
+              id="baseLayers"
+              value={state.infillDensity}
+              onChange={handleInfillDensityChange}
+            />
           </div>
-          <div
+          {/* <div
             style={{ display: "flex", flexDirection: "column", width: "100%" }}
           >
             <label htmlFor="cars">Fill pattern</label>
@@ -310,20 +360,54 @@ const MainContent = () => {
               <option value="taingle">Traingle</option>
               <option value="gyroid">Gyroid</option>
             </select>
+          </div> */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
+              gap: "8px", // optional spacing
+            }}
+          >
+            <label htmlFor="cars">Infill pattern</label>
+            <select
+              name="fill-pattern"
+              id="cars"
+              style={{
+                padding: "20px",
+                borderRadius: "4px",
+                border: "1px solid #ccc",
+                fontSize: "14px",
+                backgroundColor: "#f9f9f9",
+                color: "#333",
+                height: "23px",
+              }}
+            >
+              <option value="linear">Linear</option>
+              <option value="hex">Hex</option>
+              <option value="grid">Grid</option>
+              <option value="taingle">Traingle</option> {/* typo here */}
+              <option value="gyroid">Gyroid</option>
+            </select>
           </div>
         </div>
         <div className="btn-container">
           <button onClick={handleSlice}>Slice</button>
-          <button onClick={handleReset}>Reset</button>
+          <button onClick={handleReset}>Reset to Default</button>
           <button onClick={handleVisibility}>Visibilty</button>
           <button onClick={handleClear}>Clear Workspace</button>
         </div>
         {loader ? <Loader /> : ""}
       </section>
       {/* right section  */}
+
       <section className="right-panel">
         {total_layer ? <SingleLayerSlider /> : ""}
-        <button onClick={handleCopyLayerData}>CopyLayerData</button>
+        {process.env.NODE_ENV === "dev" && (
+          <button onClick={handleCopyLayerData}>CopyLayerData</button>
+        )}
+        {/* <button onClick={handleCopyLayerData}>CopyLayerData</button> */}
+
         <CanvasComp meshRef={meshRef} />
       </section>
     </section>
@@ -331,20 +415,3 @@ const MainContent = () => {
 };
 
 export default MainContent;
-
-//  have the left bar
-//   layer height--> top layer--> base layer
-// 20/0.5
-
-// function getAreaFrom(pointsArray) {
-//   console.log("points array in get area from function", pointsArray);
-//   const planeArray = segmentsToLoopXY(pointsArray);
-//   // Convert array of [x, y] to array of THREE.Vector2
-//   const vectorPoints = planeArray.map((p) => new THREE.Vector2(p[0], p[1]));
-
-//   // Ensure clockwise winding (ShapeUtils.area returns negative if counter-clockwise)
-//   const rawArea = THREE.ShapeUtils.area(vectorPoints);
-//   const area = Math.abs(rawArea);
-//   console.log("area maybe", area);
-//   return area;
-// }

@@ -9,7 +9,7 @@ const Layers = () => {
   const topLayers = state.topLayers || 0;
   const baseLayers = state.baseLayers || 0;
   const currentLayer = state.currentLayerIndex;
-  // Filter out only non-empty layers
+
   const filteredWhole = wholeLayerData
     .map((layer, index) => ({ layer, index }))
     .filter(({ layer }) => Array.isArray(layer) && layer.flat().length > 0);

@@ -20,3 +20,4 @@ export const TOP_LAYERS = "TOP_LAYERS";
 export const BASE_LAYERS = "BASE_LAYERS";
 export const POSITIONY = "POSITIONY";
 export const CLEAR_FILE = "CLEAR_FILE";
+export const INFILL_DENSITY = "INFILL_DENSITY";

@@ -22,6 +22,7 @@ import {
   BASE_LAYERS,
   POSITIONY,
   CLEAR_FILE,
+  INFILL_DENSITY,
 } from "./constants/actions";
 import Layers from "./component/Layers";
 
@@ -35,7 +36,7 @@ export const initialState = {
   polygonVerticesDebug: null,
   polyonsArrayPerLayer: [],
   arrayOfpolyonsArrayPerLayer: [],
-  layerHeight: 0.5,
+  layerHeight: 0.2,
   totalLayers: null,
   slicingComplete: false,
   wholeLayerData: [],
@@ -46,6 +47,7 @@ export const initialState = {
   topLayers: 3,
   baseLayers: 3,
   positionY: 0,
+  infillDensity: 2,
 };
 //  reducer fucntion
 export function reducer(state, action) {
@@ -129,6 +131,9 @@ export function reducer(state, action) {
     }
     case BASE_LAYERS: {
       return { ...state, baseLayers: action.payload };
+    }
+    case INFILL_DENSITY: {
+      return { ...state, infillDensity: action.payload };
     }
     case POSITIONY: {
       return { ...state, positionY: action.payload };

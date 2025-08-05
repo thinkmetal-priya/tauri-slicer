@@ -17,7 +17,7 @@ const CanvasComp = ({ meshRef }) => {
   return (
     <Canvas
       gl={{ localClippingEnabled: true }}
-      camera={{ position: [0, 100, 300], near: 0.002, far: 5000 }}
+      camera={{ position: [0, 100, 200], near: 0.002, far: 5000 }}
       style={{ width: "80vw", height: "100vh", backgroundColor: "white" }}
     >
       {/* <ambientLight intensity={Math.PI}  /> */}
