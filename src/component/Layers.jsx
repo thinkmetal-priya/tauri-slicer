@@ -11,31 +11,23 @@ const Layers = () => {
   const topLayers = state.topLayers || 0;
   const baseLayers = state.baseLayers || 0;
   const currentLayer = state.currentLayerIndex;
-
-  const layerHeight = state.layerHeight;
+  const totalLayers = state.totalLayers;
 
   useEffect(() => {
-    if (!wholeLayerData) return null;
+    if (!wholeLayerData) return;
 
-    const arrOfLayers = wholeLayerData
-      .map((o) => o.arrayOfPolygons)
-      .filter((i) => Array.isArray(i) && i.flat().length > 0);
     const target = wholeLayerData.find((item, idx) => idx === currentLayer);
 
-    console.log("target layers ", { arrOfLayers, target });
-    let color = "blue";
+    console.log("target layers ", target);
 
-    if (target?.ylayerValue < baseLayers * layerHeight) {
-      color = "green";
-    } else if (
-      target?.ylayerValue >=
-      (arrOfLayers.length - topLayers) * layerHeight
-    ) {
-      color = "red";
-    }
-    sc(color);
     if (target?.arrayOfPolygons) {
-      console.log("setting...", target.arrayOfPolygons);
+      if (currentLayer < baseLayers + 1) {
+        sc("blue");
+      } else if (currentLayer > totalLayers - topLayers) {
+        sc("green");
+      } else {
+        sc("red");
+      }
 
       sl(target.arrayOfPolygons);
     }
@@ -45,13 +37,6 @@ const Layers = () => {
     state?.localPlane?.constant,
     state.currentLayerIndex,
   ]);
-
-  // useEffect(() => {
-  //   console.log("[[[[[[[[[[[[", l);
-  // }, [l]);
-
-  // const wholeLayerData = state?.wholeLayerData;
-  // if (!wholeLayerData) return null;
 
   return <>{l.length > 0 && <LineComp polygons={l} color={c} />}</>;
 };

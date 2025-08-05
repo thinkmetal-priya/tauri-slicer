@@ -133,7 +133,7 @@ const MainContent = () => {
             });
             arrayOfAllPolygonArrays.arrayOfPolygons.push(arrayOfPolygons);
           });
-          // console.log("value of array fo all poly", arrayOfAllPolygonArrays); // this is for one layer
+          console.log("value of array fo all poly", arrayOfAllPolygonArrays); // this is for one layer
           try {
             const arrayOfPolygonArea = await invoke(
               "calculate_polygon_perimeter",
