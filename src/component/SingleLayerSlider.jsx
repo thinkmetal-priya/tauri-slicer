@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import * as THREE from "three";
 import ReactSlider from "react-slider";
 import { Context, DispatchCtx } from "../context";
-import { CURRENT_LAYER_INDEX, LP } from "../constants/actions";
+import { CULLING_PLANE, CURRENT_LAYER_INDEX } from "../constants/actions";
 
 function SingleLayerSlider() {
   const state = useContext(Context);
@@ -17,7 +17,7 @@ function SingleLayerSlider() {
     setLayer(val);
     if (layer !== 0) {
       dispatch({
-        type: LP,
+        type: CULLING_PLANE,
         payload: new THREE.Plane(
           new THREE.Vector3(0, -1, 0),
           val * state.layerHeight
@@ -49,7 +49,7 @@ function SingleLayerSlider() {
   useEffect(() => {
     if (layer !== 0) {
       dispatch({
-        type: LP,
+        type: CULLING_PLANE,
         payload: new THREE.Plane(
           new THREE.Vector3(0, -1, 0),
           layer * state.layerHeight

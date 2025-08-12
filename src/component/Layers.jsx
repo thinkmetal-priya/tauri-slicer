@@ -34,7 +34,7 @@ const Layers = () => {
   }, [
     state?.wholeLayerData,
     state?.currentLayer,
-    state?.localPlane?.constant,
+    state?.cullingPlane?.constant,
     state.currentLayerIndex,
   ]);
 

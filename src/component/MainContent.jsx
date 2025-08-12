@@ -18,7 +18,7 @@ import {
   CLEAR_FILE,
   INFILL_DENSITY,
   CURRENT_LAYER_INDEX,
-  LP,
+  CULLING_PLANE,
   ARRAY_OF_POLYGONS_ARRAY_PER_LAYER,
 } from "../constants/actions";
 import { useRef } from "react";
@@ -154,7 +154,7 @@ const MainContent = () => {
           // wholeLayerData.push(arrayOfPolygonArea)
         }
         dispatch({
-          type: LP,
+          type: CULLING_PLANE,
           payload: new THREE.Plane(
             new THREE.Vector3(0, -1, 0),
             wholeLayerData.length * state.layerHeight || 100
@@ -283,8 +283,8 @@ const MainContent = () => {
       payload: initialState.semiTransparent,
     });
     dispatch({
-      type: LP,
-      payload: initialState.localPlane,
+      type: CULLING_PLANE,
+      payload: initialState.cullingPlane,
     });
     dispatch({
       type: ARRAY_OF_POLYGONS_ARRAY_PER_LAYER,
