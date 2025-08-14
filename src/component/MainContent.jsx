@@ -218,14 +218,14 @@ const MainContent = () => {
     const currentLayer = state.currentLayerIndex;
 
     const wholeLayerData = state.wholeLayerData;
-    const filteredWhole = wholeLayerData
-      .map((layer, index) => ({ layer, index }))
-      .filter(({ layer }) => Array.isArray(layer) && layer.flat().length > 0);
+    // const filteredWhole = wholeLayerData
+    //   .map((layer, index) => ({ layer, index }))
+    //   .filter(({ layer }) => Array.isArray(layer) && layer.flat().length > 0);
 
     // console.log("filtered array", filteredWhole);
-    const target = filteredWhole.find((item) => item.index === currentLayer);
+    const target = wholeLayerData.find((item, idx) => idx === currentLayer);
     navigator.clipboard
-      .writeText(JSON.stringify(target.layer))
+      .writeText(JSON.stringify(target?.arrayOfPolygons))
       .then(() => {
         alert("copied for layer: " + currentLayer);
       })
@@ -421,7 +421,7 @@ const MainContent = () => {
         {process.env.NODE_ENV === "dev" && (
           <button onClick={handleCopyLayerData}>CopyLayerData</button>
         )}
-        {/* <button onClick={handleCopyLayerData}>CopyLayerData</button> */}
+        <button onClick={handleCopyLayerData}>CopyLayerData</button>
 
         <CanvasComp meshRef={meshRef} />
       </section>
