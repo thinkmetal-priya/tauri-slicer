@@ -3,14 +3,17 @@ use crate::polygon::poly::get_line_seg;
 
 use ordered_float::OrderedFloat;
 use std::{collections::HashMap, f64::INFINITY};
-
+pub type Point = [f64; 3];
+pub type Edges = (Point, Point);
+pub type Polygon = Vec<Edges>;
+pub type Polygons = Vec<Polygon>;
 #[tauri::command]
 pub fn vertices_to_points(
     array: Vec<f64>,
     y_min: f64,
     y_max: f64,
     y_inc: f64,
-) -> serde_json::Value {
+) -> HashMap<String, Vec<Vec<Edges>>> {
     let mut inter_section_planes: Vec<f64> = vec![];
 
     let mut polygon_vertices: HashMap<OrderedFloat<f64>, Vec<f64>> = HashMap::new();
@@ -81,6 +84,25 @@ pub fn vertices_to_points(
 
         i += 9;
     }
+
+
+
+let mut map_of_layer_with_polygon_seg: HashMap<String, Vec<Vec<Edges>>> = HashMap::new();
+
+for (y_key, vertices) in &polygon_vertices {
+    let key_str = y_key.to_string();
+    let edges_map = get_line_seg(key_str, vertices.clone()); // HashMap<String, Vec<Vec<Edges>>>
+
+    for (layer, edges_matrix) in &edges_map {
+        // Insert into global map, merging if already exists
+        map_of_layer_with_polygon_seg
+            .entry(layer.clone()) // <-- use layer from edges_map, not key_str
+            .or_insert_with(Vec::new)
+            .extend(edges_matrix.clone());
+    }
+}
+
+
     // let mut all_layer_edges = HashMap::new();
 
     // for (y_key, entry) in &polygon_vertices {
@@ -101,13 +123,16 @@ pub fn vertices_to_points(
     // );
     // Convert HashMap<OrderedFloat<f64>, Vec<f64>> to a serializable map
     // reduce the number of points ny checking collinearity de-duplication
-    let serializable_map: HashMap<String, Vec<f64>> = polygon_vertices
-        .into_iter()
-        .map(|(k, v)| (k.to_string(), v))
-        .collect();
+    // let serializable_map: HashMap<String, Vec<f64>> = polygon_vertices
+    //     .into_iter()
+    //     .map(|(k, v)| (k.to_string(), v))
+    //     .collect();
 
-    serde_json::to_value(serializable_map).unwrap()
+    // serde_json::to_value(serializable_map).unwrap()
     // polygon_vertices
+
+
+    map_of_layer_with_polygon_seg
 }
 // traverse the hashset and send the value (array of points) to the  function
 // get all polygons

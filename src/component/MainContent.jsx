@@ -88,7 +88,7 @@ const MainContent = () => {
         console.log("invokeParams", invokeParams);
 
         const verticesToPointsArray = await invoke(...invokeParams);
-        // console.log("value of verticesToPoints array", verticesToPointsArray);
+        console.log("value of verticesToPoints array", verticesToPointsArray);
 
         const totalLayers = Object.keys(verticesToPointsArray).length;
         dispatch({
@@ -96,75 +96,75 @@ const MainContent = () => {
           payload: totalLayers,
         });
 
-        const wholeLayerData = [];
-        for (const key of Object.keys(verticesToPointsArray).sort(
-          (a, b) => +a - +b
-        )) {
-          const ylayerValue = key;
-          const pointsArray = verticesToPointsArray[key];
-          const arrayOfAllPolygonArrays = {
-            ylayerValue: ylayerValue,
-            arrayOfPolygons: [],
-          };
-          // if (ylayerValue === "15") {
-          //   console.log(
-          //     "value of pointsArray of layer 30",
-          //     verticesToPointsArray[ylayerValue]
-          //   );
-          // }
+        // const wholeLayerData = [];
+        // for (const key of Object.keys(verticesToPointsArray).sort(
+        //   (a, b) => +a - +b
+        // )) {
+        //   const ylayerValue = key;
+        //   const pointsArray = verticesToPointsArray[key];
+        //   const arrayOfAllPolygonArrays = {
+        //     ylayerValue: ylayerValue,
+        //     arrayOfPolygons: [],
+        //   };
+        //   // if (ylayerValue === "15") {
+        //   //   console.log(
+        //   //     "value of pointsArray of layer 30",
+        //   //     verticesToPointsArray[ylayerValue]
+        //   //   );
+        //   // }
 
-          // console.log("value of pointsArray", pointsArray);
-          const polygonsArrMap = await invoke("get_line_seg", {
-            layerYValue: ylayerValue,
-            flatArray: pointsArray,
-          });
-          setLoader(false);
-          // console.log("value for each layer, polygonArrMAp", polygonsArrMap);
+        //   // console.log("value of pointsArray", pointsArray);
+        //   const polygonsArrMap = await invoke("get_line_seg", {
+        //     layerYValue: ylayerValue,
+        //     flatArray: pointsArray,
+        //   });
+        //   setLoader(false);
+        //   // console.log("value for each layer, polygonArrMAp", polygonsArrMap);
 
-          // in this log we're getting the y layer value
+        //   // in this log we're getting the y layer value
 
-          Object.keys(polygonsArrMap).forEach((key) => {
-            const arrayOfPolygons = polygonsArrMap[key];
-            // const ylayerValue = key;
-            // console.log("aarray val of polygons",arrayVal);
-            dispatch({
-              type: "POLYGONS_ARRAY_PER_LAYER",
-              payload: { arrayOfPolygons, ylayerValue },
-            });
-            arrayOfAllPolygonArrays.arrayOfPolygons.push(arrayOfPolygons);
-          });
-          console.log("value of array fo all poly", arrayOfAllPolygonArrays); // this is for one layer
-          try {
-            const arrayOfPolygonArea = await invoke(
-              "calculate_polygon_perimeter",
-              {
-                polygons: arrayOfAllPolygonArrays.arrayOfPolygons[0],
-              }
-            );
-            // console.log("array of polygons area", arrayOfPolygonArea);
-          } catch (error) {
-            console.error("Error invoking calculate_polygon_perimeter:", err);
-          }
-          dispatch({
-            type: "ARRAY_OF_POLYGONS_ARRAY_PER_LAYER",
-            payload: arrayOfAllPolygonArrays,
-          });
-          // console.log()
-          wholeLayerData.push(arrayOfAllPolygonArrays);
-          // wholeLayerData.push(arrayOfPolygonArea)
-        }
-        dispatch({
-          type: CULLING_PLANE,
-          payload: new THREE.Plane(
-            new THREE.Vector3(0, -1, 0),
-            wholeLayerData.length * state.layerHeight || 100
-          ),
-        });
+        //   Object.keys(polygonsArrMap).forEach((key) => {
+        //     const arrayOfPolygons = polygonsArrMap[key];
+        //     // const ylayerValue = key;
+        //     // console.log("aarray val of polygons",arrayVal);
+        //     dispatch({
+        //       type: "POLYGONS_ARRAY_PER_LAYER",
+        //       payload: { arrayOfPolygons, ylayerValue },
+        //     });
+        //     arrayOfAllPolygonArrays.arrayOfPolygons.push(arrayOfPolygons);
+        //   });
+        //   console.log("value of array fo all poly", arrayOfAllPolygonArrays); // this is for one layer
+        //   try {
+        //     const arrayOfPolygonArea = await invoke(
+        //       "calculate_polygon_perimeter",
+        //       {
+        //         polygons: arrayOfAllPolygonArrays.arrayOfPolygons[0],
+        //       }
+        //     );
+        //     // console.log("array of polygons area", arrayOfPolygonArea);
+        //   } catch (error) {
+        //     console.error("Error invoking calculate_polygon_perimeter:", err);
+        //   }
+        //   dispatch({
+        //     type: "ARRAY_OF_POLYGONS_ARRAY_PER_LAYER",
+        //     payload: arrayOfAllPolygonArrays,
+        //   });
+        //   // console.log()
+        //   wholeLayerData.push(arrayOfAllPolygonArrays);
+        //   // wholeLayerData.push(arrayOfPolygonArea)
+        // }
+        // dispatch({
+        //   type: CULLING_PLANE,
+        //   payload: new THREE.Plane(
+        //     new THREE.Vector3(0, -1, 0),
+        //     wholeLayerData.length * state.layerHeight || 100
+        //   ),
+        // });
 
-        dispatch({
-          type: WHOLE_LAYERS_DATA,
-          payload: wholeLayerData,
-        });
+        // dispatch({
+        //   type: WHOLE_LAYERS_DATA,
+        //   payload: wholeLayerData,
+        // });
       } catch (error) {
         console.error("Error during slicing:", error);
         return;
