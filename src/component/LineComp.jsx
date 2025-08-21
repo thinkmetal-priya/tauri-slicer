@@ -6,9 +6,9 @@ import AlignedZigZagInfill from "./AlignedZigZagInfill";
 function LineComp({ layer, polygons, color }) {
   // ← accept color prop
   const state = useContext(Context);
-  const len = polygons[0]?.length || 0;
+  const len = polygons?.length || 0;
 
-  const filtered = polygons[0].filter(
+  const filtered = polygons.filter(
     (arr) => Array.isArray(arr) && arr.flat().length > 0
   );
 

@@ -1,12 +1,32 @@
 use crate::polygon::poly::get_line_seg;
-// use crate::polygon::make_polygon::get_all_polygons;
-
+use crate::polygon::poly_seg_outline::polygon_segments_to_outline;
+use crate::infill::fill::Part;
+use crate::infill::get_infill_zigzag::get_infill_zigzag;
+use crate::infill::sort_infill_paths::sort_infill_paths;
+// use crate::infill::generate_infill_paths;
 use ordered_float::OrderedFloat;
+// use crate::fill::FillConfig;
+use crate::infill::fill::fill;
 use std::{collections::HashMap, f64::INFINITY};
 pub type Point = [f64; 3];
 pub type Edges = (Point, Point);
 pub type Polygon = Vec<Edges>;
 pub type Polygons = Vec<Polygon>;
+pub type LineSeg = Vec<Edges>;
+pub type Line = Vec<LineSeg>;
+pub type Outline = Vec<Line>;
+pub struct FillConfig {
+    pub degree: f64,       
+    pub rectlinear: bool, 
+    pub zigzag: bool,      
+    pub line_width: f64,   
+    pub line_distance: f64,
+    pub min_point: (f64, f64),
+    pub max_point: (f64, f64),
+    pub layer_nr: usize,
+}
+
+
 #[tauri::command]
 pub fn vertices_to_points(
     array: Vec<f64>,
@@ -94,11 +114,49 @@ for (y_key, vertices) in &polygon_vertices {
     let edges_map = get_line_seg(key_str, vertices.clone()); // HashMap<String, Vec<Vec<Edges>>>
 
     for (layer, edges_matrix) in &edges_map {
-        // Insert into global map, merging if already exists
+// { key:[Array,Array.....]}
+        //Array=[.  [.   [x1,y1,z1],[x2,y2,z2]. ]       ]
+    let config = FillConfig {
+        degree: 45.0,
+        rectlinear: true,
+        zigzag: true,
+        line_width: 0.5,
+        line_distance: 5.0,
+        min_point: (0.0, 0.0),
+        max_point: (100.0, 100.0),
+        layer_nr: 1,
+    };
+
+       let outline =polygon_segments_to_outline(edges_matrix.clone());
+        // println!(
+        // "outline value-------: {:?}",
+        // outline);
+         let part = Part {
+        outline:outline ,
+        holes: vec![],
+    };
+        let infill_paths = fill(
+        config.degree, 
+        config.rectlinear,
+        config.zigzag,
+        config.line_width,
+        config.line_distance,
+        config.min_point,
+        config.max_point,
+        config.layer_nr,
+        &part,get_infill_zigzag,sort_infill_paths);
+
+
+
+       
+
+    
         map_of_layer_with_polygon_seg
-            .entry(layer.clone()) // <-- use layer from edges_map, not key_str
+            .entry(layer.clone()) 
             .or_insert_with(Vec::new)
             .extend(edges_matrix.clone());
+
+
     }
 }
 

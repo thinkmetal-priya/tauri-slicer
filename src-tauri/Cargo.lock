@@ -487,6 +487,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "clipper2"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2e9c96871d5c50dd16c0f9df018f701fc62bd4f1b73cea8efe1985df6ab3d7e6"
+dependencies = [
+ "clipper2c-sys",
+ "libc",
+ "thiserror 2.0.12",
+]
+
+[[package]]
+name = "clipper2c-sys"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc0fe1f9be1018d6be0fa3c79ab338d295fb0c0c501e4fe81bfdbe3a89a23098"
+dependencies = [
+ "cc",
+ "libc",
+]
+
+[[package]]
 name = "combine"
 version = "4.6.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3597,6 +3618,7 @@ dependencies = [
 name = "tauri-app"
 version = "0.1.0"
 dependencies = [
+ "clipper2",
  "ordered-float",
  "serde",
  "serde_json",
