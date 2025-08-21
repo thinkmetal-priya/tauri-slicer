@@ -128,13 +128,13 @@ for (y_key, vertices) in &polygon_vertices {
     };
 
        let outline =polygon_segments_to_outline(edges_matrix.clone());
-        // println!(
-        // "outline value-------: {:?}",
-        // outline);
+        println!(
+        "outline value-------: {:?}",
+        outline);
          let part = Part {
         outline:outline ,
         holes: vec![],
-    };
+        };
         let infill_paths = fill(
         config.degree, 
         config.rectlinear,
@@ -269,3 +269,8 @@ for (y_key, vertices) in &polygon_vertices {
 //         polygon_vertices.len()
 //     );
 // }
+
+
+
+
+// [[-10.0, -6.599999999999973], [-10.0, 10.0], [-5.806882166896646, 10.0], [-4.084226506386051, 10.0], [-2.5530570125339986, 10.0], [4.392226755043691, 10.0], [4.966635009695827, 10.0], [8.61753233852798, 10.0], [10.0, 10.0], [10.0, 8.187022783859925], [10.0, 7.6450837520966], [10.0, -0.36890614110312203], [10.0, -6.713678462804797], [10.0, -8.66805432723693], [10.0, -10.0], [6.599999999999973, -10.0], [-10.0, -10.0]]
