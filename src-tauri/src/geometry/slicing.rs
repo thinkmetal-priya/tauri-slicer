@@ -21,8 +21,8 @@ pub struct FillConfig {
     pub zigzag: bool,      
     pub line_width: f64,   
     pub line_distance: f64,
-    pub min_point: (f64, f64),
-    pub max_point: (f64, f64),
+    pub min_point: [f64;2],
+    pub max_point: [f64;2],
     pub layer_nr: usize,
 }
 
@@ -122,8 +122,8 @@ for (y_key, vertices) in &polygon_vertices {
         zigzag: true,
         line_width: 0.5,
         line_distance: 5.0,
-        min_point: (0.0, 0.0),
-        max_point: (100.0, 100.0),
+        min_point: [0.0, 0.0],
+        max_point: [100.0, 100.0],
         layer_nr: 1,
     };
 

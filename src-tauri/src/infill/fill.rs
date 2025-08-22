@@ -35,27 +35,35 @@ fn compute_bounds(points: &[[f64; 2]]) -> ([f64; 2], [f64; 2]) {
 }
 
 /// Convert polygon to Clipper path (scaled integers)
-fn to_clipper_path(points: &[[f64; 2]], scale: f64) -> Path64 {
+fn to_clipper_path(points: &[[f64; 2]], scale: f64) -> Path {
     points.iter()
-        .map(|[x, y]| Point64::new((x * scale).round() as i64, (y * scale).round() as i64))
+        .map(|[x, y]| Point::new((x * scale).round() as f64, (y * scale).round() as f64))
         .collect()
 }
 
 /// Convert multiple polygons
-fn to_clipper_paths(paths: &[Vec<[f64; 2]>], scale: f64) -> Vec<Path64> {
+fn to_clipper_paths(paths: &[Vec<[f64; 2]>], scale: f64) -> Vec<Path> {
     paths.iter().map(|p| to_clipper_path(p, scale)).collect()
 }
 
 /// Convert back from Clipper path
-fn from_clipper_path(path: &Path64, scale: f64) -> Vec<[f64; 2]> {
+fn from_clipper_path(path: &Path, scale: f64) -> Vec<[f64; 2]> {
     path.iter()
-        .map(|p| [p.x as f64 / scale, p.y as f64 / scale])
+        .map(|p| [p.x() as f64 / scale, p.y() as f64 / scale])
         .collect()
 }
 
 /// Convert back multiple paths
-fn from_clipper_paths(paths: &Paths64, scale: f64) -> Vec<Vec<[f64; 2]>> {
-    paths.iter().map(|p| from_clipper_path(p, scale)).collect()
+fn from_clipper_paths(paths: &Paths, scale: f64) -> Vec<[[f64; 2]; 2]> {
+    paths
+        .iter()
+        .flat_map(|p| {
+            let pts = from_clipper_path(p, scale);
+            pts.windows(2)
+               .map(|w| [w[0], w[1]]) // convert pair of points into segment
+               .collect::<Vec<_>>()
+        })
+        .collect()
 }
 
 /// Fill generator function
@@ -74,10 +82,10 @@ pub fn fill<FGet, FSort>(
 ) -> Vec<Vec<[f64; 2]>>
 where
     // get_infill(min, max, outline_path, holes_paths, angle, spacing) -> Paths64
-    FGet: Fn([f64; 2], [f64; 2], Path64, Vec<Path64>, f64, f64) -> Paths64,
+    FGet: Fn([f64; 2], [f64; 2], Path, Vec<Path>, f64, f64) -> Paths,
     // sort_infill(paths, zigzag, part) -> Vec<Vec<[f64; 2]>>
-    FSort: Fn(Vec<Vec<[f64; 2]>>,bool, f64, f64 ) -> Vec<Vec<[f64; 2]>>,
-{
+    FSort: Fn(Vec<[[f64; 2]; 2]>,bool, f64, f64 ) ->  Vec<[[f64; 2];2]> ,
+{   
     let mut rotation = degree;
     if rectlinear && layer_nr % 2 == 0 {
         rotation += 90.0;
@@ -117,7 +125,8 @@ where
     let paths_f64 = from_clipper_paths(&result_infill, scale);
 
     // Sort infill paths
-    let sorted = sort_infill(paths_f64, zigzag, 0.8,0.8);
+    let sorted = sort_infill(paths_f64, zigzag, 0.8,0.8);    
+    // sorted is paths 
 
     // Rotate back
     sorted.iter()
