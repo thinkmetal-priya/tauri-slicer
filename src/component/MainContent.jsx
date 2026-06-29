@@ -98,7 +98,7 @@ const MainContent = () => {
 
         const wholeLayerData = [];
         for (const key of Object.keys(verticesToPointsArray).sort(
-          (a, b) => +a - +b
+          (a, b) => +a - +b,
         )) {
           const ylayerValue = key;
           const pointsArray = verticesToPointsArray[key];
@@ -139,7 +139,7 @@ const MainContent = () => {
               "calculate_polygon_perimeter",
               {
                 polygons: arrayOfAllPolygonArrays.arrayOfPolygons[0],
-              }
+              },
             );
             // console.log("array of polygons area", arrayOfPolygonArea);
           } catch (error) {
@@ -157,7 +157,7 @@ const MainContent = () => {
           type: CULLING_PLANE,
           payload: new THREE.Plane(
             new THREE.Vector3(0, -1, 0),
-            wholeLayerData.length * state.layerHeight || 100
+            wholeLayerData.length * state.layerHeight || 100,
           ),
         });
 
@@ -300,6 +300,11 @@ const MainContent = () => {
     <section className="main-container">
       {/*  left control panel */}
       <section className="left-control-panel">
+        <img
+          src="/thinkmetal.png"
+          style={{ width: "100%", height: "auto" }}
+          alt="Logo"
+        />
         <div className="inputs">
           {/* input for importing the file */}
           <div
